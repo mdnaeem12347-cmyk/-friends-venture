@@ -5,6 +5,8 @@ import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import AddMemberModal from "@/components/members/AddMemberModal";
 import EditMemberModal from "@/components/members/EditMemberModal";
+import MemberStats from "@/components/members/MemberStats";
+import MemberTable from "@/components/members/MemberTable";
 import { supabase } from "../lib/supabase";
 
 export default function MembersPage() {
@@ -53,8 +55,12 @@ export default function MembersPage() {
 
   const filteredMembers = members.filter(
     (member) =>
-      member.member_name.toLowerCase().includes(search.toLowerCase()) ||
-      member.member_id.toLowerCase().includes(search.toLowerCase())
+      member.member_name
+        ?.toLowerCase()
+        .includes(search.toLowerCase()) ||
+      member.member_id
+        ?.toLowerCase()
+        .includes(search.toLowerCase())
   );
 
   return (
@@ -69,99 +75,48 @@ export default function MembersPage() {
           {/* Page Header */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
 
-            <h1 className="text-3xl font-bold text-blue-700">
-              Members
-            </h1>
+            <div>
+              <h1 className="text-3xl font-bold text-blue-700">
+                Members
+              </h1>
+
+              <p className="text-gray-500 mt-1">
+                Manage all Friends Venture members
+              </p>
+            </div>
 
             <button
               onClick={() => setOpen(true)}
-              className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg"
+              className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl transition"
             >
               + Add Member
             </button>
 
           </div>
 
+          {/* Statistics */}
+          <MemberStats members={members} />
+
           {/* Search */}
-          <div className="mb-5">
+          <div className="mb-6">
             <input
               type="text"
-              placeholder="Search member..."
+              placeholder="Search by Member ID or Name..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="border rounded-lg p-3 w-full md:w-80"
+              className="w-full md:w-96 rounded-xl border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
             />
           </div>
 
-          {/* Responsive Table */}
-          <div className="bg-white rounded-xl shadow overflow-x-auto">
-
-            <table className="min-w-[900px] w-full">
-
-              <thead className="bg-blue-600 text-white">
-                <tr>
-                  <th className="p-3 text-left">Member ID</th>
-                  <th className="p-3 text-left">Name</th>
-                  <th className="p-3 text-left">Join Date</th>
-                  <th className="p-3 text-left">Monthly Deposit</th>
-                  <th className="p-3 text-left">Status</th>
-                  <th className="p-3 text-center">Actions</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {filteredMembers.map((member) => (
-                  <tr key={member.id} className="border-b">
-
-                    <td className="p-3">
-                      {member.member_id}
-                    </td>
-
-                    <td className="p-3">
-                      {member.member_name}
-                    </td>
-
-                    <td className="p-3">
-                      {member.join_date}
-                    </td>
-
-                    <td className="p-3">
-                      BDT{" "}
-                      {Number(member.monthly_deposit).toLocaleString()}
-                    </td>
-
-                    <td className="p-3">
-                      {member.status}
-                    </td>
-
-                    <td className="p-3 text-center whitespace-nowrap">
-
-                      <button
-                        onClick={() => {
-                          setSelectedMember(member);
-                          setEditOpen(true);
-                        }}
-                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded mr-2"
-                      >
-                        Edit
-                      </button>
-
-                      <button
-                        onClick={() => deleteMember(member.id)}
-                        className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
-                      >
-                        Delete
-                      </button>
-
-                    </td>
-
-                  </tr>
-                ))}
-              </tbody>
-
-            </table>
-
-          </div>
+          {/* Members Table */}
+          <MemberTable
+            members={filteredMembers}
+            onEdit={(member) => {
+              setSelectedMember(member);
+              setEditOpen(true);
+            }}
+            onDelete={deleteMember}
+          />
 
         </main>
 
