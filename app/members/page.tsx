@@ -33,9 +33,7 @@ export default function MembersPage() {
   }, []);
 
   async function deleteMember(id: number) {
-    const ok = confirm("Delete this member?");
-
-    if (!ok) return;
+    if (!confirm("Delete this member?")) return;
 
     const { error } = await supabase
       .from("members")
@@ -58,39 +56,43 @@ export default function MembersPage() {
   );
 
   return (
-    <div className="flex min-h-screen bg-slate-100">
+    <div className="md:flex min-h-screen bg-slate-100">
       <Sidebar />
 
-      <div className="flex-1">
+      <div className="flex-1 w-full">
         <Header />
 
-        <main className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-blue-700">
+        <main className="p-4 md:p-6">
+
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+
+            <h1 className="text-2xl md:text-3xl font-bold text-blue-700">
               Members
             </h1>
 
             <button
               onClick={() => setOpen(true)}
-              className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700"
+              className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg"
             >
               + Add Member
             </button>
+
           </div>
 
-          <div className="mb-5">
-            <input
-              type="text"
-              placeholder="Search member..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="border rounded-lg p-3 w-full md:w-80"
-            />
-          </div>
+          <input
+            type="text"
+            placeholder="Search member..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full md:w-80 border rounded-lg p-3 mb-5"
+          />
 
-          <div className="bg-white rounded-xl shadow overflow-hidden">
-            <table className="w-full">
+          <div className="bg-white rounded-xl shadow overflow-x-auto">
+
+            <table className="min-w-[900px] w-full">
+
               <thead className="bg-blue-600 text-white">
+
                 <tr>
                   <th className="p-3 text-left">Member ID</th>
                   <th className="p-3 text-left">Name</th>
@@ -99,47 +101,68 @@ export default function MembersPage() {
                   <th className="p-3 text-left">Status</th>
                   <th className="p-3 text-center">Actions</th>
                 </tr>
+
               </thead>
 
               <tbody>
+
                 {filteredMembers.map((member) => (
-                  <tr key={member.id} className="border-b">
+
+                  <tr key={member.id} className="border-b hover:bg-gray-50">
+
                     <td className="p-3">{member.member_id}</td>
 
-                    <td className="p-3">{member.member_name}</td>
+                    <td className="p-3 font-medium">
+                      {member.member_name}
+                    </td>
 
                     <td className="p-3">{member.join_date}</td>
 
                     <td className="p-3">
-                      BDT{" "}
-                      {Number(member.monthly_deposit).toLocaleString()}
+                      BDT {Number(member.monthly_deposit).toLocaleString()}
                     </td>
 
-                    <td className="p-3">{member.status}</td>
-
-                    <td className="p-3 text-center">
-                      <button
-                        onClick={() => {
-                          setSelectedMember(member);
-                          setEditOpen(true);
-                        }}
-                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded mr-2"
-                      >
-                        Edit
-                      </button>
-
-                      <button
-                        onClick={() => deleteMember(member.id)}
-                        className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
-                      >
-                        Delete
-                      </button>
+                    <td className="p-3">
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+                        {member.status}
+                      </span>
                     </td>
+
+                    <td className="p-3">
+
+                      <div className="flex gap-2 justify-center">
+
+                        <button
+                          onClick={() => {
+                            setSelectedMember(member);
+                            setEditOpen(true);
+                          }}
+                          className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          onClick={() => deleteMember(member.id)}
+                          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+                        >
+                          Delete
+                        </button>
+
+                      </div>
+
+                    </td>
+
                   </tr>
+
                 ))}
+
               </tbody>
+
             </table>
+
           </div>
+
         </main>
 
         <AddMemberModal
@@ -157,6 +180,7 @@ export default function MembersPage() {
           }}
           onSuccess={loadMembers}
         />
+
       </div>
     </div>
   );
