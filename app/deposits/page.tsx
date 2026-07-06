@@ -40,22 +40,37 @@ export default function DepositsPage() {
       return;
     }
 
+    // Check duplicate deposit
+    const { data: existing } = await supabase
+      .from("deposits")
+      .select("id")
+      .eq("member_id", memberId)
+      .eq("deposit_month", depositMonth)
+      .maybeSingle();
+
+    if (existing) {
+      alert("This member has already paid for this month.");
+      return;
+    }
+
     const depositId = "DEP-" + Date.now();
 
-    const { error } = await supabase.from("deposits").insert({
-      deposit_id: depositId,
-      member_id: memberId,
-      deposit_date: depositDate,
-      deposit_month: depositMonth,
-      savings_amount: Number(amount),
-    });
+    const { error } = await supabase
+      .from("deposits")
+      .insert({
+        deposit_id: depositId,
+        member_id: memberId,
+        deposit_date: depositDate,
+        deposit_month: depositMonth,
+        savings_amount: Number(amount),
+      });
 
     if (error) {
       alert(error.message);
       return;
     }
 
-    alert("Deposit Saved");
+    alert("Deposit saved successfully.");
 
     setMemberId("");
     setDepositDate("");
@@ -73,15 +88,12 @@ export default function DepositsPage() {
         <Header />
 
         <main className="p-6">
-
           <h1 className="text-3xl font-bold text-blue-700 mb-6">
             Monthly Deposits
           </h1>
 
           <div className="bg-white rounded-xl shadow p-6 mb-8">
-
             <div className="grid md:grid-cols-2 gap-4">
-
               <select
                 className="border rounded-lg p-3"
                 value={memberId}
@@ -118,7 +130,6 @@ export default function DepositsPage() {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
-
             </div>
 
             <button
@@ -127,15 +138,11 @@ export default function DepositsPage() {
             >
               Save Deposit
             </button>
-
           </div>
 
           <div className="bg-white rounded-xl shadow overflow-hidden">
-
             <table className="w-full">
-
               <thead className="bg-blue-600 text-white">
-
                 <tr>
                   <th className="p-3 text-left">Deposit ID</th>
                   <th className="p-3 text-left">Member</th>
@@ -143,15 +150,11 @@ export default function DepositsPage() {
                   <th className="p-3 text-left">Amount</th>
                   <th className="p-3 text-left">Date</th>
                 </tr>
-
               </thead>
 
               <tbody>
-
                 {deposits.map((d) => (
-
                   <tr key={d.id} className="border-b">
-
                     <td className="p-3">{d.deposit_id}</td>
 
                     <td className="p-3">{d.member_id}</td>
@@ -159,21 +162,15 @@ export default function DepositsPage() {
                     <td className="p-3">{d.deposit_month}</td>
 
                     <td className="p-3">
-                      BDT {d.savings_amount}
+                      BDT {Number(d.savings_amount).toLocaleString()}
                     </td>
 
                     <td className="p-3">{d.deposit_date}</td>
-
                   </tr>
-
                 ))}
-
               </tbody>
-
             </table>
-
           </div>
-
         </main>
       </div>
     </div>

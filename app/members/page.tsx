@@ -3,12 +3,15 @@
 import { useEffect, useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
-import AddMemberModal from "@/components/AddMemberModal";
+import AddMemberModal from "@/components/members/AddMemberModal";
+import EditMemberModal from "@/components/members/EditMemberModal";
 import { supabase } from "../lib/supabase";
 
 export default function MembersPage() {
   const [members, setMembers] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<any>(null);
   const [search, setSearch] = useState("");
 
   async function loadMembers() {
@@ -45,13 +48,13 @@ export default function MembersPage() {
     }
 
     alert("Member deleted successfully.");
-
     loadMembers();
   }
 
-  const filteredMembers = members.filter((member) =>
-    member.member_name.toLowerCase().includes(search.toLowerCase()) ||
-    member.member_id.toLowerCase().includes(search.toLowerCase())
+  const filteredMembers = members.filter(
+    (member) =>
+      member.member_name.toLowerCase().includes(search.toLowerCase()) ||
+      member.member_id.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -62,7 +65,6 @@ export default function MembersPage() {
         <Header />
 
         <main className="p-6">
-
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold text-blue-700">
               Members
@@ -87,11 +89,8 @@ export default function MembersPage() {
           </div>
 
           <div className="bg-white rounded-xl shadow overflow-hidden">
-
             <table className="w-full">
-
               <thead className="bg-blue-600 text-white">
-
                 <tr>
                   <th className="p-3 text-left">Member ID</th>
                   <th className="p-3 text-left">Name</th>
@@ -100,15 +99,11 @@ export default function MembersPage() {
                   <th className="p-3 text-left">Status</th>
                   <th className="p-3 text-center">Actions</th>
                 </tr>
-
               </thead>
 
               <tbody>
-
                 {filteredMembers.map((member) => (
-
                   <tr key={member.id} className="border-b">
-
                     <td className="p-3">{member.member_id}</td>
 
                     <td className="p-3">{member.member_name}</td>
@@ -116,14 +111,18 @@ export default function MembersPage() {
                     <td className="p-3">{member.join_date}</td>
 
                     <td className="p-3">
-                      BDT {Number(member.monthly_deposit).toLocaleString()}
+                      BDT{" "}
+                      {Number(member.monthly_deposit).toLocaleString()}
                     </td>
 
                     <td className="p-3">{member.status}</td>
 
                     <td className="p-3 text-center">
-
                       <button
+                        onClick={() => {
+                          setSelectedMember(member);
+                          setEditOpen(true);
+                        }}
                         className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded mr-2"
                       >
                         Edit
@@ -135,19 +134,12 @@ export default function MembersPage() {
                       >
                         Delete
                       </button>
-
                     </td>
-
                   </tr>
-
                 ))}
-
               </tbody>
-
             </table>
-
           </div>
-
         </main>
 
         <AddMemberModal
@@ -156,6 +148,15 @@ export default function MembersPage() {
           onSuccess={loadMembers}
         />
 
+        <EditMemberModal
+          open={editOpen}
+          member={selectedMember}
+          onClose={() => {
+            setEditOpen(false);
+            setSelectedMember(null);
+          }}
+          onSuccess={loadMembers}
+        />
       </div>
     </div>
   );
