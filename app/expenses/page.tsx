@@ -37,7 +37,7 @@ export default function ExpensesPage() {
     const { error } = await supabase.from("expenses").insert({
       expense_id: expenseId,
       expense_date: expenseDate,
-      purpose: purpose,
+      purpose,
       amount: Number(amount),
       paid_by: paidBy,
     });
@@ -64,19 +64,21 @@ export default function ExpensesPage() {
       <div className="flex-1">
         <Header />
 
-        <main className="p-6">
+        <main className="p-4 md:p-6">
 
-          <h1 className="text-3xl font-bold text-blue-700 mb-6">
+          <h1 className="text-3xl font-bold text-red-600 mb-6">
             Expenses
           </h1>
 
-          <div className="bg-white rounded-xl shadow p-6 mb-8">
+          {/* Expense Form */}
 
-            <div className="grid md:grid-cols-2 gap-4">
+          <div className="bg-white rounded-xl shadow p-4 md:p-6 mb-8">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
               <input
                 type="date"
-                className="border rounded-lg p-3"
+                className="border rounded-lg p-3 w-full"
                 value={expenseDate}
                 onChange={(e) => setExpenseDate(e.target.value)}
               />
@@ -84,7 +86,7 @@ export default function ExpensesPage() {
               <input
                 type="text"
                 placeholder="Purpose"
-                className="border rounded-lg p-3"
+                className="border rounded-lg p-3 w-full"
                 value={purpose}
                 onChange={(e) => setPurpose(e.target.value)}
               />
@@ -92,7 +94,7 @@ export default function ExpensesPage() {
               <input
                 type="number"
                 placeholder="Amount"
-                className="border rounded-lg p-3"
+                className="border rounded-lg p-3 w-full"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
@@ -100,7 +102,7 @@ export default function ExpensesPage() {
               <input
                 type="text"
                 placeholder="Paid By"
-                className="border rounded-lg p-3"
+                className="border rounded-lg p-3 w-full"
                 value={paidBy}
                 onChange={(e) => setPaidBy(e.target.value)}
               />
@@ -109,16 +111,18 @@ export default function ExpensesPage() {
 
             <button
               onClick={saveExpense}
-              className="mt-5 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg"
+              className="mt-5 w-full md:w-auto bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg"
             >
               Save Expense
             </button>
 
           </div>
 
-          <div className="bg-white rounded-xl shadow overflow-hidden">
+          {/* Expense Table */}
 
-            <table className="w-full">
+          <div className="bg-white rounded-xl shadow overflow-x-auto">
+
+            <table className="min-w-[850px] w-full">
 
               <thead className="bg-red-600 text-white">
 
@@ -146,8 +150,8 @@ export default function ExpensesPage() {
                       {expense.purpose}
                     </td>
 
-                    <td className="p-3">
-                      BDT {expense.amount}
+                    <td className="p-3 font-semibold text-red-600">
+                      BDT {Number(expense.amount).toLocaleString()}
                     </td>
 
                     <td className="p-3">
@@ -169,6 +173,7 @@ export default function ExpensesPage() {
           </div>
 
         </main>
+
       </div>
     </div>
   );
