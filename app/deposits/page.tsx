@@ -40,7 +40,6 @@ export default function DepositsPage() {
       return;
     }
 
-    // Check duplicate deposit
     const { data: existing } = await supabase
       .from("deposits")
       .select("id")
@@ -87,15 +86,20 @@ export default function DepositsPage() {
       <div className="flex-1">
         <Header />
 
-        <main className="p-6">
+        <main className="p-4 md:p-6">
+
           <h1 className="text-3xl font-bold text-blue-700 mb-6">
             Monthly Deposits
           </h1>
 
-          <div className="bg-white rounded-xl shadow p-6 mb-8">
-            <div className="grid md:grid-cols-2 gap-4">
+          {/* Form */}
+
+          <div className="bg-white rounded-xl shadow p-4 md:p-6 mb-8">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
               <select
-                className="border rounded-lg p-3"
+                className="border rounded-lg p-3 w-full"
                 value={memberId}
                 onChange={(e) => setMemberId(e.target.value)}
               >
@@ -110,7 +114,7 @@ export default function DepositsPage() {
 
               <input
                 type="date"
-                className="border rounded-lg p-3"
+                className="border rounded-lg p-3 w-full"
                 value={depositDate}
                 onChange={(e) => setDepositDate(e.target.value)}
               />
@@ -118,7 +122,7 @@ export default function DepositsPage() {
               <input
                 type="text"
                 placeholder="Deposit Month"
-                className="border rounded-lg p-3"
+                className="border rounded-lg p-3 w-full"
                 value={depositMonth}
                 onChange={(e) => setDepositMonth(e.target.value)}
               />
@@ -126,23 +130,30 @@ export default function DepositsPage() {
               <input
                 type="number"
                 placeholder="Savings Amount"
-                className="border rounded-lg p-3"
+                className="border rounded-lg p-3 w-full"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
+
             </div>
 
             <button
               onClick={saveDeposit}
-              className="mt-5 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
+              className="mt-5 w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
             >
               Save Deposit
             </button>
+
           </div>
 
-          <div className="bg-white rounded-xl shadow overflow-hidden">
-            <table className="w-full">
+          {/* Table */}
+
+          <div className="bg-white rounded-xl shadow overflow-x-auto">
+
+            <table className="min-w-[800px] w-full">
+
               <thead className="bg-blue-600 text-white">
+
                 <tr>
                   <th className="p-3 text-left">Deposit ID</th>
                   <th className="p-3 text-left">Member</th>
@@ -150,27 +161,43 @@ export default function DepositsPage() {
                   <th className="p-3 text-left">Amount</th>
                   <th className="p-3 text-left">Date</th>
                 </tr>
+
               </thead>
 
               <tbody>
+
                 {deposits.map((d) => (
                   <tr key={d.id} className="border-b">
-                    <td className="p-3">{d.deposit_id}</td>
 
-                    <td className="p-3">{d.member_id}</td>
+                    <td className="p-3">
+                      {d.deposit_id}
+                    </td>
 
-                    <td className="p-3">{d.deposit_month}</td>
+                    <td className="p-3">
+                      {d.member_id}
+                    </td>
+
+                    <td className="p-3">
+                      {d.deposit_month}
+                    </td>
 
                     <td className="p-3">
                       BDT {Number(d.savings_amount).toLocaleString()}
                     </td>
 
-                    <td className="p-3">{d.deposit_date}</td>
+                    <td className="p-3">
+                      {d.deposit_date}
+                    </td>
+
                   </tr>
                 ))}
+
               </tbody>
+
             </table>
+
           </div>
+
         </main>
       </div>
     </div>
